@@ -27,4 +27,4 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-bot.run("TOKEN")
+bot.run(os.environ["BOT_TOkEN"])

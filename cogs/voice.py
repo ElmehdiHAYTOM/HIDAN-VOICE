@@ -1,13 +1,14 @@
 import discord
 import asyncio
 from discord.ext import commands
+import os
 import pymongo
 
 
 class voice(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.myclient = pymongo.MongoClient("MONGODB URL")
+        self.myclient = pymongo.MongoClient(os.environ["MONGO_URL"])
         self.db = self.myclient["voice"]
 
     def add(self,q,table):
@@ -35,8 +36,8 @@ class voice(commands.Cog):
 
         }
         emojie={
-            "Error":"<:no_OGs:921411601842704404>",
-            "Success":"<:yes_OGs:921411600081109023>",
+            "Error":"❌",
+            "Success":"✅",
         }
 
         
@@ -77,12 +78,24 @@ class voice(commands.Cog):
                         
                     
                         voice=self.db["guild"].find_one({"guildID":guildID})["voiceCategoryID"]
+                        setting =self.db["userSettings"].find_one({"userID":member.id})
                         guildSetting=self.db["guildSettings"].find_one({"guildID":guildID})
-                        name = f"{member.name}'s channel"
-                        if guildSetting is None:
-                            limit = 0
+                        if setting is None:
+                            name = f"{member.name}'s channel"
+                            if guildSetting is None:
+                                limit = 0
+                            else:
+                                limit = guildSetting["channelLimit"]
                         else:
-                            limit = guildSetting["channelLimit"]
+                            if guildSetting is None:
+                                name = setting["channelName"]
+                                limit = setting["channelLimit"]
+                            elif guildSetting is not None and setting["channelLimit"] == 0:
+                                name = setting["channelName"]
+                                limit = guildSetting["channelLimit"]
+                            else:
+                                name = setting["channelName"]
+                                limit = setting["channelLimit"]
                         categoryID = voice
                         
                         category = self.bot.get_channel(categoryID)
@@ -317,8 +330,11 @@ class voice(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.edit(user_limit = limit)
             await ctx.channel.send(embed=self.embed(ctx.author,f' You have set the channel limit to be '+ '`{}`.'.format(limit),"Success"))
-            
-
+            voice =  self.db["userSettings"].find_one({"userID":id,})
+            if voice is None:
+                self.add({"userID":id,"channelName":f'{ctx.author.name}',"channelLimit":limit},"userSettings")
+            else:
+                self.db["userSettings"].update_one({"userID":id},{"$set":{"channelLimit":limit}})
 
     @voice.command()
     @commands.cooldown(2, 600, commands.BucketType.user)
@@ -335,7 +351,13 @@ class voice(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.edit(name = name)
             await ctx.channel.send(embed=self.embed(ctx.author,f' You have changed the channel name to '+ '`{}`'.format(name),"Success"))
-            
+            voice =  self.db["userSettings"].find_one({"userID":id,})
+            if voice is None:
+                self.add({"userID":id,"channelName":name,"channelLimit":0},"userSettings")
+            else:
+                self.db["userSettings"].update_one({"userID":id},{"$set":{"channelName":name}})
+
+
     @voice.command()
     async def claim(self, ctx):
         
