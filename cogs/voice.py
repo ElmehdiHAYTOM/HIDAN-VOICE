@@ -1,16 +1,13 @@
 import discord
 import asyncio
 from discord.ext import commands
-import traceback
-import os
-import validators
 import pymongo
 
 
 class voice(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.myclient = pymongo.MongoClient("mongodb+srv://HIDAN:622623766Q358442@hidanbot.cd8yb.mongodb.net")
+        self.myclient = pymongo.MongoClient("MONGODB URL")
         self.db = self.myclient["voice"]
 
     def add(self,q,table):
