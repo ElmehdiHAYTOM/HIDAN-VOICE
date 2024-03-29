@@ -194,7 +194,7 @@ class voice(commands.Cog):
                                     channel = await ctx.guild.create_voice_channel(channel.content, category=new_cat)
                                     voice=self.db["guild"].find_one({"guildID":guildID,"ownerID":id})
                                     if voice is None:
-                                        self.add({"guildID":guildID,"ownerID":id,"voiceChannelID":channel.id,"voiceCategoryID":new_cat.id,"default_role":role},"guild")
+                                        self.add({"guildID":guildID,"ownerID":id,"voiceChannelID":channel.id,"voiceCategoryID":new_cat.id,"default_role":role.id},"guild")
                                     else:
                                         self.db["guild"].update_one({"guildID":guildID},{"$set":{"guildID":guildID,"ownerID":id,"voiceChannelID":channel.id,"voiceCategoryID":new_cat.id,"default_role":role.id}})
                                     await ctx.channel.send(embed=self.embed(ctx.author,"**You are all setup and ready to go!**\nYou can edit the permissions for the category and it's gonna sync to created rooms","Success"))
