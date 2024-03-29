@@ -21,7 +21,7 @@ Welcome to the Discord Temporary Voice Channel Bot! This bot allows users to cre
 - **.v lock**: Locks the current temporary voice channel, preventing others from joining.
 - **.v unlock**: Unlocks the current temporary voice channel, allowing others to join.
 - **.v permit [@user]**: Grants permission to the specified user to join the current temporary voice channel.
-- **.v claim **:Claim ownership of channel once the owner has left.
+- **.v claim**:Claim ownership of channel once the owner has left.
 - **.voice transfer**:Give ownership of channel to a member in the same voice.
 - **.v limit [number]**: Sets the maximum number of members allowed in the current temporary voice channel.
 - **.v name [new name]**: Changes the name of the current temporary voice channel.
